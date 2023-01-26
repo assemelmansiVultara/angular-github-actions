@@ -11,6 +11,8 @@ jobs:
     permissions:
       deployments: write
       contents: read
+      statuses: write
+
     steps:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -21,6 +23,21 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@v3
+    - name: Get git output names
+      id: git
+      shell: bash
+      run: |
+        if [[ "${{ github.ref }}" != "refs/tags/"* ]]; then
+          if [[ ${{ github.event_name }} == 'pull_request' ]]; then
+            echo "::set-output name=current_branch::$HEAD_REF"
+          else
+            echo "::set-output name=current_branch::$REF_BRANCH"
+          fi
+        else
+          REF=$(printf "%q" "${{ github.ref }}")
+          REF_BRANCH=${REF/refs\/tags\/${{ inputs.strip_tag_prefix }}/}
+          echo "::set-output name=current_branch::$(eval printf "%s" "$REF_BRANCH")"
+        fi
 
     - name: Create GitHub deployment
       uses: chrnorm/deployment-action@v2
@@ -48,7 +65,7 @@ jobs:
       uses: chrnorm/deployment-status@v2
       with:
         token: '${{ github.token }}'
-        deployment-id: ${{ steps.deployment.outputs.id }}
+        deployment-id: ${{ steps.deployment.outputs.deployment_id }}
         state: 'success'
 
     - name: Update deployment status (failure)
@@ -56,5 +73,5 @@ jobs:
       uses: chrnorm/deployment-status@v2
       with:
         token: '${{ github.token }}'
-        deployment-id: ${{ steps.deployment.outputs.id }}
+        deployment-id: ${{ steps.deployment.outputs.deployment_id }}
         state: 'failure'
