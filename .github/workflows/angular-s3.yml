@@ -11,12 +11,6 @@ jobs:
     permissions:
       deployments: write
     steps:
-    - name: Create GitHub deployment
-      uses: chrnorm/deployment-action@v2
-      id: vultara-deployment
-      with:
-        token: '${{ github.token }}'
-        environment: production
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -27,6 +21,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Create GitHub deployment
+      uses: chrnorm/deployment-action@v2
+      id: vultara-deployment
+      with:
+        token: '${{ github.token }}'
+        environment: production
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
