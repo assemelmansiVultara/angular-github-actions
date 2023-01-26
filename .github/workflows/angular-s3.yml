@@ -8,7 +8,15 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      deployments: write
     steps:
+    - name: Create GitHub deployment
+      uses: chrnorm/deployment-action@v2
+      id: vultara-deployment
+      with:
+        token: '${{ github.token }}'
+        environment: production
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -32,4 +40,26 @@ jobs:
 
     - name: Deploy to S3
       if: success()
-      run: aws s3 sync ./dist/angular-github-actions s3://angular-github-actions
+      run: aws s3 sync ./dist/angular-github-actions s3://angular-github-actions --delete
+
+    - name: CloudFront Invalidation
+      if: success()
+      run: |
+        aws configure set preview.cloudfront true
+        aws cloudfront create-invalidation --distribution-id E1XZQXZQXZQXZQ --paths "/index.html"
+
+    - name: Update deployment status (success)
+      if: success()
+      uses: chrnorm/deployment-status@v2
+      with:
+        token: '${{ github.token }}'
+        deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+        state: 'success'
+
+    - name: Update deployment status (failure)
+      if: failure()
+      uses: chrnorm/deployment-status@v2
+      with:
+        token: '${{ github.token }}'
+        deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+        state: 'failure'
