@@ -43,12 +43,6 @@ jobs:
       if: success()
       run: aws s3 sync ./dist/angular-github-actions s3://angular-github-actions --delete
 
-    - name: CloudFront Invalidation
-      if: success()
-      run: |
-        aws configure set preview.cloudfront true
-        aws cloudfront create-invalidation --distribution-id E1XZQXZQXZQXZQ --paths "/index.html"
-
     - name: Update deployment status (success)
       if: success()
       uses: chrnorm/deployment-status@v2
