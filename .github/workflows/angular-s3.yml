@@ -41,7 +41,7 @@ jobs:
 
     - name: Create GitHub deployment
       uses: chrnorm/deployment-action@v2
-      id: vultara-deployment
+      id: deployment
       with:
         token: '${{ github.token }}'
         environment: production
