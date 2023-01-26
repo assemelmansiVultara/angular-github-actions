@@ -26,6 +26,7 @@ jobs:
       uses: chrnorm/deployment-action@v2
       id: vultara-deployment
       with:
+        token: '${{ github.token }}'
         environment: production
     - name: Setup Node.js
       uses: actions/setup-node@v3
