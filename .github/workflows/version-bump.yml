@@ -30,6 +30,7 @@ jobs:
       deployments: write
       contents: write
       statuses: write
+      pull-requests: write
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Check out the content (source branch).  Use a deploy key so that
