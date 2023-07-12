@@ -67,5 +67,7 @@ jobs:
         git push origin version-${{ github.event.inputs.version }}
 
     - name: Create pull request
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
       run: |
         gh pr create --title "Bump version to ${{ github.event.inputs.version }}" --body "Bump version to ${{ github.event.inputs.version }}" --base main --head version-${{ github.event.inputs.version }} --repo angular-github-actions
