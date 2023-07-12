@@ -73,8 +73,8 @@ jobs:
       run: |
         gh pr create --title "Bump version to ${{ github.event.inputs.version }}" --body "Bump version to ${{ github.event.inputs.version }}" --base main --head version-${{ github.event.inputs.version }}-${{ github.run_number }}
 
-    - name: Merge pull request
+    - name: Approve and merge pull request
       env:
-        GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
       run: |
-        gh pr merge --auto --squash --delete-branch --merge "$(<.ghpr)"
+          gh pr merge --auto --merge --squash --delete-branch --title "Bump version to ${{ github.event.inputs.version }}" --body "Bump version to ${{ github.event.inputs.version }}" --base main --head version-${{ github.event.inputs.version }}-${{ github.run_number }}
