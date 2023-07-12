@@ -77,4 +77,4 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ github.token }}
       run: |
-          gh pr merge --auto --merge --squash --delete-branch --base main --head version-${{ github.event.inputs.version }}-${{ github.run_number }}
+          gh pr review ${{ github.event.inputs.version }}-${{ github.run_number }} --approve
