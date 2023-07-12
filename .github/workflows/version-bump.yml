@@ -1,0 +1,71 @@
+# This is a basic workflow that is manually triggered
+
+name: New version
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      version:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'Type of new version (major / minor / patch)'
+        # Input has to be provided for the workflow to run
+        required: true
+        type: choice
+        options: 
+        - patch
+        - minor
+        - major
+
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "bump-version"
+  bump-version:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    permissions:
+      deployments: write
+      contents: write
+      statuses: write
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Check out the content (source branch).  Use a deploy key so that
+    # when we push changes, it will trigger the release workflow
+    # run that runs on: tag. (Using the GitHub token would
+    # not run the workflow to prevent infinite recursion.)
+
+    - uses: actions/checkout@v3
+      with:
+        token: '${{ github.token }}'
+    #   with:
+    #     ssh-key: ${{ secrets.DEPLOY_KEY }}
+
+    # - name: Setup Node.js
+    #   uses: actions/setup-node@v2
+    #   with:
+    #     node-version: '14'
+    #     cache: 'npm'
+
+    # - name: Install npm packages
+    #   run: npm ci
+
+    - name: Initialize mandatory git config
+      run: |
+        git config user.name "${{ github.actor }}"
+        git config user.email $git_email
+      env:
+        git_email: "${{ github.actor }}@vultara.com"
+    - name: bump version
+      run: npm version ${{ github.event.inputs.version }} --tag-version-prefix=""
+
+    - name: Create new branch and push
+      run: |
+        git checkout -b version-${{ github.event.inputs.version }}
+        git push origin version-${{ github.event.inputs.version }}
+
+    - name: Create pull request
+      run: |
+        gh pr create --title "Bump version to ${{ github.event.inputs.version }}" --body "Bump version to ${{ github.event.inputs.version }}" --base main --head version-${{ github.event.inputs.version }} --repo angular-github-actions
