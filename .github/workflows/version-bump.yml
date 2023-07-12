@@ -63,11 +63,11 @@ jobs:
 
     - name: Create new branch and push
       run: |
-        git checkout -b version-${{ github.event.inputs.version }}
-        git push origin version-${{ github.event.inputs.version }}
+        git checkout -b version-${{ github.event.inputs.version }}-${{ github.run_number }}
+        git push origin version-${{ github.event.inputs.version }}-${{ github.run_number }}
 
     - name: Create pull request
       env:
         GITHUB_TOKEN: ${{ github.token }}
       run: |
-        gh pr create --title "Bump version to ${{ github.event.inputs.version }}" --body "Bump version to ${{ github.event.inputs.version }}" --base main --head version-${{ github.event.inputs.version }} --repo angular-github-actions
+        gh pr create --title "Bump version to ${{ github.event.inputs.version }}" --body "Bump version to ${{ github.event.inputs.version }}" --base main --head version-${{ github.event.inputs.version }}-${{ github.run_number }} --repo angular-github-actions
