@@ -69,30 +69,6 @@ jobs:
 
     - name: Create pull request
       env:
-        GITHUB_TOKEN: ${{ github.token }}
+        GITHUB_TOKEN: ${{ secrets.SCOPED_REPO_TOKEN }}
       run: |
         gh pr create --title "Bump version to ${{ github.event.inputs.version }}" --body "Bump version to ${{ github.event.inputs.version }}" --base pre-master --head version-${{ github.event.inputs.version }}-${{ github.run_number }}
-
-  create-github-release:
-    needs: bump-version
-    name: Create GitHub Release
-    runs-on: ubuntu-latest
-    # needs: publish
-      
-    steps:
-      - name: Extract version from branch name (for release branches)
-        run: |
-          BRANCH_NAME="${{ github.ref }}"
-          VERSION=${BRANCH_NAME#refs/tags/}
-          echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
-      
-      - name: Create Release Notes
-        uses: actions/github-script@v4.0.2
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            await github.request(`POST /repos/${{ github.repository }}/releases`, {
-              tag_name: "${{ github.ref }}",
-              name: "v${{ env.RELEASE_VERSION }} release",
-              generate_release_notes: true
-            });

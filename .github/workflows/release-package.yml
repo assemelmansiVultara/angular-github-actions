@@ -1,5 +1,7 @@
 on:
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - pre-master
 
 name: Auto Release Process_Do not Touch
 
