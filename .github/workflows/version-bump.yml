@@ -77,4 +77,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.SCOPED_REPO_TOKEN }}
       run: |
-        gh pr review --approve --body "Bump version to ${{ github.event.inputs.version }}" --pull-request version-${{ github.event.inputs.version }}-${{ github.run_number }}
+        gh pr review version-${{ github.event.inputs.version }}-${{ github.run_number }} --approve --body "Bump version to ${{ github.event.inputs.version }}"
