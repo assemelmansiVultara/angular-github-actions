@@ -78,3 +78,9 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       run: |
         gh pr review version-${{ github.event.inputs.version }}-${{ github.run_number }} --approve --body "Bump version to ${{ github.event.inputs.version }}"
+    
+    - name: Merge pull request through github cli
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        gh pr merge version-${{ github.event.inputs.version }}-${{ github.run_number }} --squash --delete-branch --auto
