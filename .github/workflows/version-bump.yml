@@ -84,3 +84,9 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       run: |
         gh pr merge version-${{ github.event.inputs.version }}-${{ github.run_number }} --squash --delete-branch --auto
+
+    - name: Delete remote branch
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        git push origin --delete version-${{ github.event.inputs.version }}-${{ github.run_number }}
