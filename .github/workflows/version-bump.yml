@@ -69,7 +69,7 @@ jobs:
     - name: Create new branch and push
       run: |
         git checkout -b version-${{ github.event.inputs.version }}-${{ github.run_number }}
-        git push origin version-${{ github.event.inputs.version }}-${{ github.run_number }} --follow-tags
+        git push origin version-${{ github.event.inputs.version }}-${{ github.run_number }}
 
     - name: Create pull request
       env:
@@ -89,10 +89,14 @@ jobs:
       run: |
         gh pr merge version-${{ github.event.inputs.version }}-${{ github.run_number }} --squash --delete-branch --auto
     
+    - name: Wait for merge to complete
+      run: sleep 10
+
     - name: Push tag
       run: |
+        git checkout pre-master
         git tag -a ${{ steps.get_version.outputs.version }} -m "Version v${{ steps.get_version.outputs.version }}"
-        git push --follow-tags origin main
+        git push --follow-tags origin pre-master
 
     # - name: Create PR to main
     #   env:
