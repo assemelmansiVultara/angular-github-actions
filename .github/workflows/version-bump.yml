@@ -65,16 +65,22 @@ jobs:
     - name: Create new branch and push
       run: |
         git checkout -b version-${{ github.event.inputs.version }}-${{ github.run_number }}
-        git push origin version-${{ github.event.inputs.version }}-${{ github.run_number }}
+        git push origin version-${{ github.event.inputs.version }}-${{ github.run_number }} --follow-tags
 
     - name: Create pull request
       env:
+        GITHUB_TOKEN: ${{ secrets.SCOPED_REPO_TOKEN }}
+      run: |
+        gh pr create --title "Bump version to ${{ github.event.inputs.version }}" --body "Bump version to ${{ github.event.inputs.version }}" --base pre-master --head version-${{ github.event.inputs.version }}-${{ github.run_number }}
+    
+    - name: Approve pull request through github cli
+      env:
         GITHUB_TOKEN: ${{ github.token }}
       run: |
-        gh pr create --title "Bump version to ${{ github.event.inputs.version }}" --body "Bump version to ${{ github.event.inputs.version }}" --base main --head version-${{ github.event.inputs.version }}-${{ github.run_number }}
-
-    - name: Approve and merge pull request
+        gh pr review version-${{ github.event.inputs.version }}-${{ github.run_number }} --approve --body "Bump version to ${{ github.event.inputs.version }}"
+    
+    - name: Merge pull request through github cli
       env:
-          GITHUB_TOKEN: ${{ github.token }}
+        GITHUB_TOKEN: ${{ github.token }}
       run: |
-          gh pr review version-${{ github.event.inputs.version }}-${{ github.run_number }} --approve
+        gh pr merge version-${{ github.event.inputs.version }}-${{ github.run_number }} --squash --delete-branch --auto
