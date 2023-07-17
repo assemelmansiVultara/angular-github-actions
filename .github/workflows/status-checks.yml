@@ -11,4 +11,4 @@ jobs:
     steps:
       - name: Check PR title format
         if: contains(github.event.pull_request.title, 'version-') && contains(github.event.pull_request.title, '-minor') || contains(github.event.pull_request.title, '-patch') || contains(github.event.pull_request.title, '-major')
-        run: echo "PR title format is correct is correct"
+        run: echo "PR title format is correct is correct new workflow"
