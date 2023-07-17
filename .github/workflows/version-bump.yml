@@ -91,7 +91,7 @@ jobs:
     
     - name: Push tag
       run: |
-        git tag -a v${{ steps.get_version.outputs.version }} -m "Version v${{ steps.get_version.outputs.version }}"
+        git tag -a ${{ steps.get_version.outputs.version }} -m "Version v${{ steps.get_version.outputs.version }}"
         git push --follow-tags origin main
 
     # - name: Create PR to main
