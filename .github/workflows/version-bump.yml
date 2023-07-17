@@ -94,6 +94,7 @@ jobs:
 
     - name: Push tag
       run: |
+        git checkout pre-master
         git tag -a ${{ steps.get_version.outputs.version }} -m "Version v${{ steps.get_version.outputs.version }}"
         git push origin pre-master --follow-tags
 
