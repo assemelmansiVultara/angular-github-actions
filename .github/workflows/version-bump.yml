@@ -62,6 +62,10 @@ jobs:
     - name: bump version
       run: npm version ${{ github.event.inputs.version }} --tag-version-prefix=""
 
+    - name: Get current version number
+      id: get_version
+      run: echo "::set-output name=version::$(jq -r '.version' package.json)"
+
     - name: Create new branch and push
       run: |
         git checkout -b version-${{ github.event.inputs.version }}-${{ github.run_number }}
@@ -84,3 +88,15 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       run: |
         gh pr merge version-${{ github.event.inputs.version }}-${{ github.run_number }} --squash --delete-branch --auto
+
+    - name: Delete remote branch
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        git push origin --delete version-${{ github.event.inputs.version }}-${{ github.run_number }}
+    
+    - name: Create PR to main
+      env:
+        GITHUB_TOKEN: ${{ secrets.SCOPED_REPO_TOKEN }}
+      run: |
+        gh pr create --title "v${{steps.get_version.outputs.version}} release" --body "v${{steps.get_version.outputs.version}} release" --base main --head pre-master

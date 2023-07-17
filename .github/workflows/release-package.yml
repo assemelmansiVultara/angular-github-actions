@@ -1,7 +1,7 @@
 on:
-  pull_request:
-    branches:
-      - pre-master
+  push:
+    tags:
+      - '*'
 
 name: Auto Release Process_Do not Touch
 
@@ -31,7 +31,7 @@ jobs:
     steps:
       - name: Extract version from branch name (for release branches)
         run: |
-          BRANCH_NAME="${{ github.head_ref }}"
+          BRANCH_NAME="${{ github.ref }}"
           VERSION=${BRANCH_NAME#refs/tags/}
           echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
 
@@ -41,7 +41,7 @@ jobs:
           github-token: ${{secrets.SCOPED_REPO_TOKEN}}
           script: |
             await github.request(`POST /repos/${{ github.repository }}/releases`, {
-              tag_name: "${{ github.head_ref }}",
+              tag_name: "${{ github.ref }}",
               name: "v${{ env.RELEASE_VERSION }} release",
               generate_release_notes: true
             });
