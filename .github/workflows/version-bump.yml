@@ -89,10 +89,14 @@ jobs:
       run: |
         gh pr merge version-${{ github.event.inputs.version }}-${{ github.run_number }} --squash --delete-branch --auto
     
+    - name: Wait for merge to complete
+      run: sleep 10
+
     - name: Push tag
       run: |
+        git checkout pre-master
         git tag -a ${{ steps.get_version.outputs.version }} -m "Version v${{ steps.get_version.outputs.version }}"
-        git push --follow-tags origin main
+        git push --follow-tags origin pre-master
 
     # - name: Create PR to main
     #   env:
