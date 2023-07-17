@@ -94,14 +94,8 @@ jobs:
         git tag -a v${{ steps.get_version.outputs.version }} -m "Version v${{ steps.get_version.outputs.version }}"
         git push --follow-tags origin main
 
-    - name: Delete remote branch
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-      run: |
-        git push origin --delete version-${{ github.event.inputs.version }}-${{ github.run_number }}
-
-    - name: Create PR to main
-      env:
-        GITHUB_TOKEN: ${{ secrets.SCOPED_REPO_TOKEN }}
-      run: |
-        gh pr create --title "v${{steps.get_version.outputs.version}} release" --body "v${{steps.get_version.outputs.version}} release" --base main --head pre-master
+    # - name: Create PR to main
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.SCOPED_REPO_TOKEN }}
+    #   run: |
+    #     gh pr create --title "v${{steps.get_version.outputs.version}} release" --body "v${{steps.get_version.outputs.version}} release" --base main --head pre-master
