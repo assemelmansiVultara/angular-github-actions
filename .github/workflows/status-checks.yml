@@ -1,0 +1,14 @@
+name: Check PR title format
+
+on:
+  pull_request:
+    branches:
+      - pre-master
+
+jobs:
+  check-pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title format
+        if: contains(github.event.pull_request.title, 'version-') && contains(github.event.pull_request.title, '-minor') || contains(github.event.pull_request.title, '-patch') || contains(github.event.pull_request.title, '-major')
+        run: echo "PR title format is correct"
