@@ -88,6 +88,11 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       run: |
         gh pr merge version-${{ github.event.inputs.version }}-${{ github.run_number }} --squash --delete-branch --auto
+    
+    - name: Push tag
+      run: |
+        git tag -a v${{ steps.get_version.outputs.version }} -m "Version v${{ steps.get_version.outputs.version }}"
+        git push --follow-tags origin main
 
     - name: Delete remote branch
       env:
