@@ -99,4 +99,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.SCOPED_REPO_TOKEN }}
       run: |
-        gh pr create --title "v${{steps.get_version.outputs.version}} release" --base main --head pre-master
+        gh pr create --title "v${{steps.get_version.outputs.version}} release" --body "v${{steps.get_version.outputs.version}} release" --base main --head pre-master
